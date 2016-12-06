@@ -1,6 +1,8 @@
 package com.esimorp.shs.http;
 
 import com.esimorp.shs.entity.Request;
+import com.esimorp.shs.entity.Response;
+import com.esimorp.shs.entity.body.PlainTextBody;
 import com.esimorp.shs.exceptions.HttpException;
 
 import java.io.*;
@@ -43,8 +45,9 @@ public class HttpServer {
             e.printStackTrace();
         }
 
-        System.out.println(request);
-        output.write("Hello World");
+        PlainTextBody body = new PlainTextBody("Hello World");
+        Response response = new Response("HTTP/1.1", 200, "HelloWorld", body);
+        output.write(response.toString());
         output.flush();
         input.close();
         output.close();

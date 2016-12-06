@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 public class Headers extends HashMap<String, Header> {
+    public Headers() {
+
+    }
+
     public Headers(List<String> headerLines) {
         for (String line : headerLines) {
             Header header = new Header(line);
@@ -16,12 +20,9 @@ public class Headers extends HashMap<String, Header> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         String separator = System.getProperty("line.separator");
-        builder.append("Headers:");
-        builder.append(separator);
         this.forEach((key, header) -> {
             builder.append(header.toString()).append(separator);
         });
-        builder.append(separator);
         return builder.toString();
     }
 }
