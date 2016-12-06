@@ -2,6 +2,7 @@ package com.esimorp.shs.entity;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public class Headers extends HashMap<String, Header> {
     public Headers(List<String> headerLines) {
@@ -9,5 +10,18 @@ public class Headers extends HashMap<String, Header> {
             Header header = new Header(line);
             put(header.getName(), header);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        String separator = System.getProperty("line.separator");
+        builder.append("Headers:");
+        builder.append(separator);
+        this.forEach((key, header) -> {
+            builder.append(header.toString()).append(separator);
+        });
+        builder.append(separator);
+        return builder.toString();
     }
 }

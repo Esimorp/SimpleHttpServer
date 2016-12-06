@@ -5,7 +5,9 @@ public class Header {
     private String value;
 
     public Header(String line) {
-
+        String[] tempArray = line.split(":");
+        this.name = tempArray[0].trim();
+        this.value = tempArray[1].trim();
     }
 
 
@@ -23,5 +25,10 @@ public class Header {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + name + ":" + value + "}";
     }
 }
