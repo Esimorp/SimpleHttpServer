@@ -37,6 +37,9 @@ public class HttpServer {
                 }
             }
         } catch (HttpException e) {
+            int errorCode = e.getCode();
+        } catch (Exception e) {
+            int errorCode = 500;
             e.printStackTrace();
         }
 
