@@ -19,9 +19,8 @@ public class Headers extends HashMap<String, Header> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        String separator = System.getProperty("line.separator");
         this.forEach((key, header) -> {
-            builder.append(header.toString()).append(separator);
+            builder.append(header.toString()).append("\r\n");
         });
         return builder.toString();
     }

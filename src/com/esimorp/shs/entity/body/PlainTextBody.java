@@ -1,10 +1,8 @@
 package com.esimorp.shs.entity.body;
 
-/**
- * Created by Esimorp on 2016/12/6.
- */
+
 public class PlainTextBody extends HttpBody {
-    private String bodyContent;
+    public String bodyContent;
 
     public PlainTextBody(String bodyContent) {
         this.bodyContent = bodyContent;
@@ -17,7 +15,7 @@ public class PlainTextBody extends HttpBody {
 
     @Override
     public String getContentType() {
-        return "text/plain";
+        return "application/x-download";
     }
 
     @Override
