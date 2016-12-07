@@ -15,41 +15,55 @@ public class HttpServer {
 
     public HttpServer(int port) throws IOException {
         ServerSocket serverSocket = new ServerSocket(port);
-        Socket socket = serverSocket.accept();
-        BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        BufferedWriter output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-
-
-        String line = null;
-        boolean isFirstLine = true;
-        Request request = new Request();
-        List<String> headerLines = new ArrayList<String>();
-        try {
-            while ((line = input.readLine()) != null) {
-                if (isFirstLine) {
-                    request.initRequestProps(line);
-                    isFirstLine = false;
-                    continue;
+        while (true) {
+            final Socket socket = serverSocket.accept();
+            new Thread(() -> {
+                BufferedReader input = null;
+                BufferedWriter output = null;
+                try {
+                    input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
                 }
-                if (line.length() == 0) {
-                    request.initRequestHeaders(headerLines);
-                    break;
-                } else {
-                    headerLines.add(line);
+
+                String line = null;
+                boolean isFirstLine = true;
+                Request request = new Request();
+                List<String> headerLines = new ArrayList<String>();
+                try {
+                    while ((line = input.readLine()) != null) {
+                        if (isFirstLine) {
+                            request.initRequestProps(line);
+                            isFirstLine = false;
+                            continue;
+                        }
+                        if (line.length() == 0) {
+                            request.initRequestHeaders(headerLines);
+                            break;
+                        } else {
+                            headerLines.add(line);
+                        }
+                    }
+                } catch (HttpException e) {
+                    int errorCode = e.getCode();
+                } catch (Exception e) {
+                    int errorCode = 500;
+                    e.printStackTrace();
                 }
-            }
-        } catch (HttpException e) {
-            int errorCode = e.getCode();
-        } catch (Exception e) {
-            int errorCode = 500;
-            e.printStackTrace();
+
+                PlainTextBody body = new PlainTextBody("Hello World");
+                Response response = new Response("HTTP/1.1", 200, "HelloWorld", body);
+                try {
+                    output.write(response.toString());
+                    output.flush();
+                    input.close();
+                    output.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
         }
-
-        PlainTextBody body = new PlainTextBody("Hello World");
-        Response response = new Response("HTTP/1.1", 200, "HelloWorld", body);
-        output.write(response.toString());
-        output.flush();
-        input.close();
-        output.close();
     }
 }

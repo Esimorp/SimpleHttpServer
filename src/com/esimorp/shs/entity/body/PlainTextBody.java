@@ -15,7 +15,7 @@ public class PlainTextBody extends HttpBody {
 
     @Override
     public String getContentType() {
-        return "application/x-download";
+        return "text/plain";
     }
 
     @Override
