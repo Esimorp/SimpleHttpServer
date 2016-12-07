@@ -1,5 +1,7 @@
-package com.esimorp.shs.entity;
+package com.esimorp.shs.entity.response;
 
+import com.esimorp.shs.entity.Header;
+import com.esimorp.shs.entity.Headers;
 import com.esimorp.shs.entity.body.HttpBody;
 
 public class Response {

@@ -9,7 +9,7 @@ public class PlainTextBody extends HttpBody {
     }
 
     @Override
-    public int getContentLength() {
+    public long getContentLength() {
         return bodyContent.getBytes().length;
     }
 

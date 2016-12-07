@@ -1,9 +1,10 @@
 package com.esimorp.shs.http;
 
 import com.esimorp.shs.entity.Request;
-import com.esimorp.shs.entity.Response;
-import com.esimorp.shs.entity.body.PlainTextBody;
+import com.esimorp.shs.entity.response.HttpErrorResponse;
+import com.esimorp.shs.entity.response.Response;
 import com.esimorp.shs.exceptions.HttpException;
+import com.esimorp.shs.handler.StaticFilesHandler;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -27,12 +28,11 @@ public class HttpServer {
                     e.printStackTrace();
                     return;
                 }
-
-                String line = null;
-                boolean isFirstLine = true;
-                Request request = new Request();
-                List<String> headerLines = new ArrayList<String>();
                 try {
+                    String line = null;
+                    boolean isFirstLine = true;
+                    Request request = new Request();
+                    List<String> headerLines = new ArrayList<String>();
                     while ((line = input.readLine()) != null) {
                         if (isFirstLine) {
                             request.initRequestProps(line);
@@ -46,22 +46,27 @@ public class HttpServer {
                             headerLines.add(line);
                         }
                     }
-                } catch (HttpException e) {
-                    int errorCode = e.getCode();
-                } catch (Exception e) {
-                    int errorCode = 500;
-                    e.printStackTrace();
-                }
-
-                PlainTextBody body = new PlainTextBody("Hello World");
-                Response response = new Response("HTTP/1.1", 200, "HelloWorld", body);
-                try {
+                    StaticFilesHandler handler = new StaticFilesHandler();
+                    Response response = handler.doWithHttpRequest(request);
                     output.write(response.toString());
-                    output.flush();
-                    input.close();
-                    output.close();
+
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (HttpException e) {
+                    try {
+                        Response response = new HttpErrorResponse(e.getCode());
+                        output.write(response.toString());
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
+                } finally {
+                    try {
+                        output.flush();
+                        input.close();
+                        output.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }).start();
         }
