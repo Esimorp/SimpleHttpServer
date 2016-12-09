@@ -1,0 +1,19 @@
+{
+  "DocumentRoot": ".",
+  "Servers": [
+    {
+      "hosts": [
+        "www.zhihu.xzy",
+        "zhihu.xzy"
+      ],
+      "DocumentRoot": "./zhihu"
+    },
+    {
+      "hosts": [
+        "www.1024.xyz",
+        "1024.xzy"
+      ],
+      "DocumentRoot": "/Users/Esimorp/IdeaProjects/SimpleHttpServer/1024"
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import com.esimorp.shs.entity.Request;
 import com.esimorp.shs.entity.response.HttpErrorResponse;
 import com.esimorp.shs.entity.response.Response;
 import com.esimorp.shs.exceptions.HttpException;
+import com.esimorp.shs.handler.HttpHandler;
 import com.esimorp.shs.handler.StaticFilesHandler;
 
 import java.io.*;
@@ -13,8 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HttpServer {
+    List<HttpHandler> handlers;
 
-    public HttpServer(int port) throws IOException {
+    public HttpServer(int port, List<HttpHandler> handlers) throws IOException {
+        setHandlers(handlers);
         ServerSocket serverSocket = new ServerSocket(port);
         while (true) {
             final Socket socket = serverSocket.accept();
@@ -46,9 +49,14 @@ public class HttpServer {
                             headerLines.add(line);
                         }
                     }
-                    StaticFilesHandler handler = new StaticFilesHandler();
-                    Response response = handler.doWithHttpRequest(request);
-                    output.write(response.toString());
+                    String host = request.getHeaders().get("Host").getValue();
+                    for (HttpHandler handler : this.handlers) {
+                        if (handler.test(host)) {
+                            Response response = handler.doWithHttpRequest(request);
+                            output.write(response.toString());
+                            return;
+                        }
+                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -70,5 +78,9 @@ public class HttpServer {
                 }
             }).start();
         }
+    }
+
+    public void setHandlers(List<HttpHandler> handlers) {
+        this.handlers = handlers;
     }
 }
