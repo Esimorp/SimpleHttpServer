@@ -10,7 +10,7 @@
     },
     {
       "hosts": [
-        "www.1024.xyz",
+        "www.1024.com",
         "1024.xzy"
       ],
       "DocumentRoot": "/Users/Esimorp/IdeaProjects/SimpleHttpServer/1024"
